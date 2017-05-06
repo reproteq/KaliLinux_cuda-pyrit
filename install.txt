@@ -1,0 +1,87 @@
+Install Kali Linux 2017.1 + Nvidia GTX-1070 drivers + Toolkit 8 + Pyrit Cuda for computing Gpu Cores
+Descargar y dar permisos
+
+https://developer.nvidia.com/cuda-downloads
+
+chmod +x cuda_8.0.61_375.26_linux.run
+
+http://www.nvidia.com/download/index.aspx?lang=es
+
+chmod +x NVIDIA-Linux-x86_64-375.66.run	
+
+Editar fuentes
+
+leafpad /etc/apt/sources.list	                                                           
+deb http://http.kali.org/kali kali-rolling main non-free contrib	
+deb-src http://http.kali.org/kali kali-rolling main non-free contrib	
+
+Actualizar distro e instalar headers
+
+apt-get update	                                                                               
+apt-get dist-upgrade	
+apt-get install -y linux-headers-$(uname -r)	
+
+Desactivar driver nouveau y actualizar grub
+
+sed 's/quiet/quiet nouveau.modeset=0/g' -i /etc/default/grub	
+update-grub	
+reboot	
+
+Modo consola sin entorno grafico
+
+ctrl+alt+f3
+login como root
+Instalar driver nvidia
+
+./NVIDIA-Linux-x86_64-375.66.run	                                             
+update-grub	
+reboot	
+
+Instalar cuda toolkit
+
+export PERL5LIB=.	                                                                  
+./cuda_8.0.61_375.26_linux.run --override	
+
+Muestra paths
+
+ldconfig -v 2>/dev/null | grep -v ^$'\t'	
+
+Editar config paths
+
+leafpad /etc/ld.so.conf
+## incluir esta linea en ld.so.conf                                                     
+/usr/local/cuda-8.0/lib64                                                           
+
+Instala librerias
+
+apt-get install python2.7-dev libssl-dev zlib1g-dev libpcap-de        
+
+Clonar repositorio
+
+git clone https://github.com/JPaulMora/Pyrit.git	                     
+
+Construir instalador e instalar
+
+python setup.py clean build install
+
+Activar CUDA en config
+
+leafpad /root/.pyrit/config	                                                                    
+use_CUDA = true	
+
+pyrit list_cores	                                                                                   
+		
+pyrit benchmark
+
+Computed 118727.81 PMKs/s total.
+#1: 'CPU-Core (SSE2/AES)': 570.0 PMKs/s (RTT 2.9)
+#2: 'CPU-Core (SSE2/AES)': 563.3 PMKs/s (RTT 3.0)
+#3: 'CPU-Core (SSE2/AES)': 575.7 PMKs/s (RTT 3.0)
+#4: 'CPU-Core (SSE2/AES)': 578.7 PMKs/s (RTT 3.0)
+#5: 'CPU-Core (SSE2/AES)': 567.0 PMKs/s (RTT 3.0)
+#6: 'CPU-Core (SSE2/AES)': 535.9 PMKs/s (RTT 2.9)
+#7: 'CPU-Core (SSE2/AES)': 551.7 PMKs/s (RTT 2.9)
+#8: 'CPU-Core (SSE2/AES)': 560.9 PMKs/s (RTT 3.1)
+CUDA:
+#1: 'CUDA-Device #1 'GeForce GTX 1070'': 127866.4 PMKs/s (RTT 1.0)
+
